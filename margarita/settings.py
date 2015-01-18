@@ -86,7 +86,3 @@ TEMPLATE_DIRS = (
 #----------------------
 
 APPNAME = 'Margarita'
-
-REPOSADO_PREF = '/bin/reposado/code/preferences.plist'
-PEROSADOLIB = '/bin/reposado/code/reposadolib'
-PEROSADOLIB_PATH = os.path.dirname(PEROSADOLIB)

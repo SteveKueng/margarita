@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block java_script %}
+<script src="{% get_static_prefix %}js/updates.js"></script>
+{% endblock %}
+
+{% block extra_style %}
+<style type="text/css">
+.dataTables_filter {
+	display: none; 
+}
+
+.loading_modal {
+	position: absolute;
+	width: 70px;
+	height: 70px;
+    float: none;
+    margin-top: 50px;
+    left: 45%;
+    z-index:2000; 
+    background:#e4e4e4;
+    border: 1px #e4e4e4 solid;
+    border-radius: 4px;
+	box-shadow: 0 0 6px #ccc;
+}
+
+.loading {
+    -webkit-animation:spin 2s linear infinite;
+    -moz-animation:spin 2s linear infinite;
+    animation:spin 2s linear infinite;
+}
+@-moz-keyframes spin { 100% { 
+    -moz-transform:rotate(360deg); 
+    }
+}
+@-webkit-keyframes spin { 100% { 
+    -webkit-transform:rotate(360deg); 
+    }
+}
+@keyframes spin { 100% {
+    -webkit-transform:rotate(360deg);
+    transform:rotate(360deg);
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="loading_modal">
+  <div class="text-center" style="padding-top:10px;">
+      <img class="loading" src="{% get_static_prefix %}images/loading.png" width="50" id="imgProgress" />
+
+  </div>
+</div>
+<div id="data">
+	<script>getdata();</script>
+</div>
+{% endblock %}

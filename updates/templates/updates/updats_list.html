@@ -1,9 +1,94 @@
-{% extends "base.html" %}
+{% load update_extras %}
 
-{% block heading %}
-<h2>Latest bookmarks</h2>
-{% endblock %}
+<script>
+	$(document).ready(function() {
+		oTable = $('#updates').dataTable({
+			paging: false,
+			"bInfo": false,
+			"aaSorting": [[ 4, "desc" ]],
+			"columns": [
+			    { "orderable": false },
+			    { "orderable": false },
+			    { "orderable": false },
+			    { "orderable": false },
+			    null,
+			    { "orderable": false },
+			    {% for branch in branches %}
+				{ "orderable": false },
+				{% endfor %}
+			  ],
+		});
 
-{% block content %}
-<p> test </p>
-{% endblock %}
+		$('#search').keyup(function(){
+	      oTable.fnFilter( $(this).val() ).draw();
+		})
+	});
+</script>
+
+<table id="updates" class="table table-hover">
+	<thead>
+		<tr>
+			<th>Title</th>
+			<th>Version</th>
+			<th>Size</th>
+			<th>Date</th>
+			<th class="hidden"></th>
+			<th>direct branch</th>
+			{% for branch in branches reversed %}
+			<th>
+				<div class="dropdown">
+				  <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+				    {{ branch.name }}
+				    <span class="caret"></span>
+				  </button>
+				  <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
+				    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">add all updates</a></li>
+				    <li role="presentation" class="divider"></li>
+				    {% for bran in branches %}
+				    	{% ifnotequal bran.name branch.name %}
+				    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">copy {{ bran.name }}</a></li>
+				    	{% endifnotequal %}
+				    {% endfor %}
+				    <li role="presentation" class="divider"></li>
+				    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">delete</a></li>
+				  </ul>
+				</div>
+			</th>
+			{% endfor %}
+		</tr>
+	</thead>
+	<tbody>
+	{% for product in products %}
+		<tr>
+			<td>
+				{{ product.title }} {% if product.depr %}<span class="label label-warning">depricated</span>{% endif %}
+			</td>
+			<td>
+				{{ product.version }}
+			</td>
+			<td>
+				{{ product.size|humanreadablesize }}
+			</td>
+			<td>
+				{{ product.PostDate|date:"d. M o" }}
+			</td>
+			<td class="hidden">{{ product.PostDate|date:"U" }}</td>
+			<td>
+				{% if product.depr %}<button class="btn btn-sm btn-default disabled"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Unlisted</button>{% else %}<button class="btn btn-sm btn-primary disabled"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Listed</button>{% endif %}
+			</td>
+			{% for branch in branches reversed %}
+				<td>
+				<button id="{{ product.id }}" onclick='addtoqueue("{{ product.id }}", "{{ branch.name }}", "{% if product.id in branch.products %}true{% endif %}")' class="btn btn-sm {{ branch.name }} 
+				{% if product.id in branch.products %}
+				btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Listed
+				{% else %}
+				btn-default"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Unlisted
+				{% endif %}
+				</button>
+				</td>
+			{% endfor %}
+		</tr>
+	  </div>	
+	  {% endfor %}
+	</tbody>
+</table>

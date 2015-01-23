@@ -49,22 +49,26 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
             <li><a href="#" onclick="sendqueue();">Apply changes <span class="badge" id="queue">0</span></a></li>
-            <li><a href="#">Link</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" data-toggle="modal" data-target="#newbranch">new branch</a></li>
             <form class="navbar-form navbar-left" role="search">
               <div class="form-group">
                 <input id="search" type="text" class="form-control" placeholder="Search">
               </div>
             </form>
+            {% if user.is_authenticated %}
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                 <li><a href="#">Admin</a></li>
                 <li class="divider"></li>
-                <li><a href="#">logout</a></li>
+                <li><a href="{% url "logout" %}">logout</a></li>
               </ul>
             </li>
+            {% else %}
+            <li><a href="{% url "login" %}" data-target="#newbranch">Login</a></li>
+            {% endif %}
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->

@@ -22,10 +22,14 @@
 		$('#search').keyup(function(){
 	      oTable.fnFilter( $(this).val() ).draw();
 		})
+
+		$(function () {
+		  $('[data-toggle="popover"]').popover()
+		})
 	});
 </script>
 
-<table id="updates" class="table table-hover">
+<table id="updates" class="table">
 	<thead>
 		<tr>
 			<th>Title</th>
@@ -42,15 +46,15 @@
 				    <span class="caret"></span>
 				  </button>
 				  <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">
-				    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">add all updates</a></li>
+				    <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="addall('{{ branch.name }}');">add all updates</a></li>
 				    <li role="presentation" class="divider"></li>
 				    {% for bran in branches %}
 				    	{% ifnotequal bran.name branch.name %}
-				    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#">copy {{ bran.name }}</a></li>
+				    	<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="copybranch('{{ bran.name }}', '{{ branch.name }}');">copy {{ bran.name }}</a></li>
 				    	{% endifnotequal %}
 				    {% endfor %}
 				    <li role="presentation" class="divider"></li>
-				    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">delete</a></li>
+				    <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="deletebranch('{{ branch.name }}');">delete</a></li>
 				  </ul>
 				</div>
 			</th>
@@ -60,8 +64,12 @@
 	<tbody>
 	{% for product in products %}
 		<tr>
-			<td>
+			<td onclick="showDiscr(this)">
 				{{ product.title }} {% if product.depr %}<span class="label label-warning">depricated</span>{% endif %}
+				<div class="well hidden" style="margin-top:10px;">
+				<b>{{ product.id }}</b><br><br>
+				{{ product.description|safe }}
+				</div>
 			</td>
 			<td>
 				{{ product.version }}

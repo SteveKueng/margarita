@@ -49,7 +49,7 @@ WSGI_APPLICATION = 'margarita.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'margaria.db'),
+        'NAME': os.path.join(BASE_DIR, 'margarita.db'),
     }
 }
 
@@ -78,6 +78,9 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
 
+
+LOGIN_URL='/login/'
+LOGIN_REDIRECT_URL='/'
 
 #----------------------
 #

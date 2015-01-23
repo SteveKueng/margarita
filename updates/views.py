@@ -2,16 +2,19 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 import json
+import os
 
 from operator import itemgetter
 from reposadolib import reposadocommon
 
-
+@login_required
 def index(request):
 	return render(request, 'updates/index.html')
 
+@login_required
 def update_list(request):
 	products = reposadocommon.getProductInfo()
 	prodlist = []
@@ -32,13 +35,14 @@ def update_list(request):
 
 	sprodlist = sorted(prodlist, key=itemgetter('PostDate'), reverse=True)
 
-	branches = list_branches();
+	branches = list_branches(request);
 
 	context = {'products': sprodlist,
 				'branches': branches}
 	return render(request, 'updates/updats_list.html', context)
 
-def list_branches():
+@login_required
+def list_branches(request):
 	catalog_branches = reposadocommon.getCatalogBranches()
 
 	# reorganize the updates into an array of branches
@@ -83,6 +87,7 @@ def get_description_content(html):
 
 	return html[startloc:endloc]
 
+@login_required
 def dup_apple(branchname):
 	catalog_branches = reposadocommon.getCatalogBranches()
 
@@ -105,7 +110,7 @@ def dup_apple(branchname):
 
 	return jsonify(result=True)
 
-@csrf_exempt
+@login_required
 def process_queue(request):
 	if request.is_ajax():
 	    if request.method == 'POST':
@@ -139,17 +144,20 @@ def process_queue(request):
 
 	return HttpResponse("OK")
 
-def new_branch(branchname):
-    catalog_branches = reposadocommon.getCatalogBranches()
-    if branchname in catalog_branches:
-        reposadocommon.print_stderr('Branch %s already exists!', branchname)
-        abort(401)
-    catalog_branches[branchname] = []
-    reposadocommon.writeCatalogBranches(catalog_branches)
-    
-    return jsonify(result='success')
+@login_required
+def new_branch(request, branchname):
+	print branchname
+	catalog_branches = reposadocommon.getCatalogBranches()
+	if branchname in catalog_branches:
+	    reposadocommon.print_stderr('Branch %s already exists!', branchname)
+	    return HttpResponse('Branch already exists!')
+	catalog_branches[branchname] = []
+	reposadocommon.writeCatalogBranches(catalog_branches)
 
-def delete_branch(branchname):
+	return HttpResponse("OK")
+
+@login_required
+def delete_branch(request, branchname):
     catalog_branches = reposadocommon.getCatalogBranches()
     if not branchname in catalog_branches:
         reposadocommon.print_stderr('Branch %s does not exist!', branchname)
@@ -172,9 +180,10 @@ def delete_branch(branchname):
 
     reposadocommon.writeCatalogBranches(catalog_branches)
     
-    return jsonify(result=True);
+    return HttpResponse("OK")
 
-def add_all(branchname):
+@login_required
+def add_all(request, branchname):
 	products = reposadocommon.getProductInfo()
 	catalog_branches = reposadocommon.getCatalogBranches()
 	
@@ -183,9 +192,10 @@ def add_all(branchname):
 	reposadocommon.writeCatalogBranches(catalog_branches)
 	reposadocommon.writeAllBranchCatalogs()
 	
-	return jsonify(result=True)
+	return HttpResponse("OK")
 
-def dup(frombranch, tobranch):
+@login_required
+def dup(request, frombranch, tobranch):
 	catalog_branches = reposadocommon.getCatalogBranches()
 
 	if frombranch not in catalog_branches.keys() or tobranch not in catalog_branches.keys():
@@ -198,4 +208,4 @@ def dup(frombranch, tobranch):
 	reposadocommon.writeCatalogBranches(catalog_branches)
 	reposadocommon.writeAllBranchCatalogs()
 
-	return jsonify(result=True)
+	return HttpResponse("OK")

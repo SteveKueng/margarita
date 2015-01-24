@@ -80,6 +80,14 @@ function sendqueue() {
 
 function getdata() {
 	$(".loading_modal").show();
+
+	cookie = getCookie("hidecommonly");
+	if(cookie == "true") {
+		$('#icon').replaceWith('<span class="glyphicon glyphicon-remove" id="icon" aria-hidden="true"></span>');
+	} else {
+		$('#icon').replaceWith('<span class="glyphicon glyphicon-ok" id="icon" aria-hidden="true"></span>');
+	}
+
 	var manifestURL = '/updates/update_list/';
 	$.get(manifestURL, function(data) {
         $('#data').html(data);
@@ -87,6 +95,7 @@ function getdata() {
         var $number = $('#queue');
 		$number.html(0);  
     });
+
 }
 
 function addall(branchname) {

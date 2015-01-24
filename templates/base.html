@@ -48,9 +48,7 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
-            <li><a href="#" onclick="sendqueue();">Apply changes <span class="badge" id="queue">0</span></a></li>
-            <li><a href="#" onclick="hidecommonly();">
-              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Hide commonly updates</a></li>
+          {% block navbar-top_extensions %}{% endblock %}
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#" data-toggle="modal" data-target="#newbranch">new branch</a></li>

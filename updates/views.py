@@ -18,9 +18,16 @@ def index(request):
 def update_list(request):
 	products = reposadocommon.getProductInfo()
 	prodlist = []
+	
+	branches = list_branches(request);
 
 	for prodid in products.keys():
 		if 'title' in products[prodid] and 'version' in products[prodid] and 'PostDate' in products[prodid]:
+			num = 0
+			for branch in branches: 
+				if prodid in branch["products"]:
+					num = num + 1
+
 			prodlist.append({
 				'title': products[prodid]['title'],
 				'version': products[prodid]['version'],
@@ -29,16 +36,17 @@ def update_list(request):
 				'description': get_description_content(products[prodid]['description']),
 				'id': prodid,
 				'depr': len(products[prodid].get('AppleCatalogs', [])) < 1,
+				'branches': num,
 				})
 		else:
 			print 'Invalid update!'
 
 	sprodlist = sorted(prodlist, key=itemgetter('PostDate'), reverse=True)
-
-	branches = list_branches(request);
+	hidecommonly = request.COOKIES.get('hidecommonly') 
 
 	context = {'products': sprodlist,
-				'branches': branches}
+				'branches': branches,
+				'hidecommonly': hidecommonly}
 	return render(request, 'updates/updats_list.html', context)
 
 @login_required

@@ -79,6 +79,7 @@ function sendqueue() {
 }
 
 function getdata() {
+	$(".loading_modal").show();
 	var manifestURL = '/updates/update_list/';
 	$.get(manifestURL, function(data) {
         $('#data').html(data);
@@ -167,4 +168,25 @@ function newbranch(branch) {
 	}
 	
 	$('#branch-name').val('');
+}
+
+function hidecommonly() {
+	cookie = getCookie("hidecommonly");
+	if(cookie == "true") {
+		document.cookie="hidecommonly=false";
+	} else {
+		document.cookie="hidecommonly=true";
+	}
+	getdata();
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
 }

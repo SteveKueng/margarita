@@ -6,44 +6,7 @@
 {% endblock %}
 
 {% block extra_style %}
-<style type="text/css">
-.dataTables_filter {
-	display: none; 
-}
-
-.loading_modal {
-	position: absolute;
-	width: 70px;
-	height: 70px;
-    float: none;
-    margin-top: 50px;
-    left: 45%;
-    z-index:2000; 
-    background:#e4e4e4;
-    border: 1px #e4e4e4 solid;
-    border-radius: 4px;
-	box-shadow: 0 0 6px #ccc;
-}
-
-.loading {
-    -webkit-animation:spin 2s linear infinite;
-    -moz-animation:spin 2s linear infinite;
-    animation:spin 2s linear infinite;
-}
-@-moz-keyframes spin { 100% { 
-    -moz-transform:rotate(360deg); 
-    }
-}
-@-webkit-keyframes spin { 100% { 
-    -webkit-transform:rotate(360deg); 
-    }
-}
-@keyframes spin { 100% {
-    -webkit-transform:rotate(360deg);
-    transform:rotate(360deg);
-    }
-}
-</style>
+<link href="{% get_static_prefix %}css/updates.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}

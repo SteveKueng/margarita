@@ -7,3 +7,6 @@ unused_*
 *.db
 
 *.pkg
+
+preferences.plist
+reposadolib

@@ -9,4 +9,5 @@ urlpatterns = patterns('updates.views',
     url(r'^dup/(?P<frombranch>[^/]+)/(?P<tobranch>[^/]+)/$', 'dup', name='margarita_dup'),
     url(r'^delete_branch/(?P<branchname>[^/]+)/$', 'delete_branch', name='margarita_delete_branch'),
     url(r'^new_branch/(?P<branchname>[^/]+)/$', 'new_branch', name='margarita_new_branch'),
+    url(r'^delete_depr/$', 'purge_product', name='margarita_delete_depr'),
 )

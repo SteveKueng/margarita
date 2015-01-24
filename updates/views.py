@@ -18,7 +18,7 @@ def index(request):
 def update_list(request):
 	products = reposadocommon.getProductInfo()
 	prodlist = []
-	
+
 	branches = list_branches(request);
 
 	for prodid in products.keys():
@@ -217,3 +217,91 @@ def dup(request, frombranch, tobranch):
 	reposadocommon.writeAllBranchCatalogs()
 
 	return HttpResponse("OK")
+
+@login_required
+def purge_product(request, product_ids="all-deprecated", force=False):
+    '''Removes products from the ProductInfo.plist and purges their local 
+    replicas (if they exist). Warns and skips if a product is not deprecated
+    or is in any branch, unless force == True. If force == True, product is 
+    also removed from all branches. This action is destructive and cannot be
+    undone.
+    product_ids is a list of productids.'''
+    
+    # sanity checking
+    for item in product_ids:
+        if item.startswith('-'):
+            reposadocommon.print_stderr('Ambiguous parameters: can\'t tell if  '
+                                     '%s is a parameter or an option!', item)
+            return
+    
+    products = reposadocommon.getProductInfo()
+    catalog_branches = reposadocommon.getCatalogBranches()
+    downloaded_product_list = reposadocommon.getDownloadStatus()
+    
+    if 'all-deprecated' in product_ids:
+        product_ids.remove('all-deprecated')
+        deprecated_productids = [key for key in products.keys()
+                                 if not products[key].get('AppleCatalogs')]
+        product_ids.extend(deprecated_productids)
+        
+    # remove all duplicate product ids
+    product_ids = list(set(product_ids))
+    
+    for product_id in product_ids:
+        if not product_id in products:
+            reposadocommon.print_stderr(
+                'Product %s does not exist in the ProductInfo database. '
+                'Skipping.', product_id)
+            continue
+        product = products[product_id]
+        product_short_info = ('%s (%s-%s)' 
+            % (product_id, product.get('title'), product.get('version')))
+        if product.get('AppleCatalogs') and not force:
+            reposadocommon.print_stderr(
+                'WARNING: Product %s is in Apple catalogs:\n   %s',
+                product_short_info, '\n   '.join(product['AppleCatalogs']))
+            reposadocommon.print_stderr('Skipping product %s', product_id)
+            continue
+        branches_with_product = [branch for branch in catalog_branches.keys()
+                                 if product_id in catalog_branches[branch]]
+        if branches_with_product:
+            if not force:
+                reposadocommon.print_stderr(
+                    'WARNING: Product %s is in catalog branches:\n    %s',
+                    product_short_info, '\n    '.join(branches_with_product))
+                reposadocommon.print_stderr('Skipping product %s', product_id)
+                continue
+            else:
+                # remove product from all branches
+                for branch_name in branches_with_product:
+                    reposadocommon.print_stdout(
+                        'Removing %s from branch %s...', 
+                        product_short_info, branch_name)
+                    catalog_branches[branch_name].remove(product_id)
+                
+        local_copy = getProductLocation(product, product_id)
+        if local_copy:
+            # remove local replica
+            reposadocommon.print_stdout(
+                'Removing replicated %s from %s...', 
+                product_short_info, local_copy)
+            try:
+                shutil.rmtree(local_copy)
+            except (OSError, IOError), err:
+                reposadocommon.print_stderr(
+                    'Error: %s', err)
+                # but not fatal, so keep going...
+        # delete product from ProductInfo database
+        del products[product_id]
+        # delete product from downloaded product list
+        if product_id in downloaded_product_list:
+            downloaded_product_list.remove(product_id)
+        
+    # write out changed catalog branches, productInfo,
+    # and rebuild our local and branch catalogs
+    reposadocommon.writeDownloadStatus(downloaded_product_list)
+    reposadocommon.writeCatalogBranches(catalog_branches)
+    reposadocommon.writeProductInfo(products)
+    reposadocommon.writeAllLocalCatalogs()
+
+    return HttpResponse("OK")

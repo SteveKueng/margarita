@@ -1,0 +1,9 @@
+*.pyc
+*.pyo
+settings.py
+.DS_Store
+unused_*
+
+*.db
+
+*.pkg

@@ -14,8 +14,9 @@ from reposadolib import reposadocommon
 def index(request):
 	return render(request, 'updates/index.html')
 
+@login_required
 def update_list(request):
-	products = reposadocommon.getProductInfo()
+	#products = reposadocommon.getProductInfo()
 	prodlist = []
 
 	branches = list_branches(request);

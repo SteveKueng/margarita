@@ -33,11 +33,11 @@
 	<thead>
 		<tr>
 			<th>Title</th>
-			<th>Version</th>
-			<th>Size</th>
+			<th class="hidden-xs">Version</th>
+			<th class="visible-md visible-lg">Size</th>
 			<th>Date</th>
 			<th class="hidden"></th>
-			<th>direct branch</th>
+			<th class="visible-md visible-lg">Apple</th>
 			{% for branch in branches reversed %}
 			<th>
 				<div class="dropdown">
@@ -63,7 +63,7 @@
 	</thead>
 	<tbody>
 	{% for product in products %}
-		{% if hidecommonly != "true" or product.branches != branches|length and not product.depr %}
+		{% if hidecommonly != "true" or not product.depr and product.branches != branches|length %}
 		<tr style="word-break: break-all;">
 			<td onclick="showDiscr(this)">
 				{{ product.title }} {% if product.depr %}<span class="label label-warning">depricated</span>{% endif %}
@@ -72,17 +72,17 @@
 				{{ product.description|safe }}
 				</div>
 			</td>
-			<td>
+			<td class="hidden-xs">
 				{{ product.version }}
 			</td>
-			<td>
+			<td class="visible-md visible-lg">
 				{{ product.size|humanreadablesize }}
 			</td>
 			<td>
-				{{ product.PostDate|date:"d. M o" }}
+				{{ product.PostDate|date:"d.m.y" }}
 			</td>
 			<td class="hidden">{{ product.PostDate|date:"U" }}</td>
-			<td>
+			<td class="visible-md visible-lg">
 				{% if product.depr %}<button class="btn btn-sm btn-default disabled"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Unlisted</button>{% else %}<button class="btn btn-sm btn-primary disabled"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Listed</button>{% endif %}
 			</td>
 			{% for branch in branches reversed %}

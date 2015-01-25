@@ -83,9 +83,9 @@ function getdata() {
 
 	cookie = getCookie("hidecommonly");
 	if(cookie == "true") {
-		$('#icon').replaceWith('<span class="glyphicon glyphicon-remove" id="icon" aria-hidden="true"></span>');
+		$('#icon').replaceWith('<a href="#" id="icon" onclick="hidecommonly();"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Unhide commonly updates</a>');
 	} else {
-		$('#icon').replaceWith('<span class="glyphicon glyphicon-ok" id="icon" aria-hidden="true"></span>');
+		$('#icon').replaceWith('<a href="#" id="icon" onclick="hidecommonly();"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Hide commonly updates</a>');
 	}
 
 	var manifestURL = '/updates/update_list/';

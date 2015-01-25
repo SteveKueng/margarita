@@ -16,7 +16,7 @@ def index(request):
 
 @login_required
 def update_list(request):
-
+	products = reposadocommon.getProductInfo()
 	prodlist = []
 
 	branches = list_branches(request);

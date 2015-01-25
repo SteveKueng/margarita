@@ -62,9 +62,8 @@
 		</tr>
 	</thead>
 	<tbody>
-	{{ request.COOKIES.hidecommonly }}
 	{% for product in products %}
-		{% if product.branches != branches|length and not product.depr or hidecommonly == "true" %}
+		{% if hidecommonly != "true" or product.branches != branches|length and not product.depr %}
 		<tr style="word-break: break-all;">
 			<td onclick="showDiscr(this)">
 				{{ product.title }} {% if product.depr %}<span class="label label-warning">depricated</span>{% endif %}

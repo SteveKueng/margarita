@@ -18,15 +18,22 @@ def index(request):
 def update_list(request):
 	products = reposadocommon.getProductInfo()
 	prodlist = []
-
-	branches = list_branches(request);
+	
+	hidecommonly = request.COOKIES.get('hidecommonly')
+	branches = list_branches(request)
 
 	for prodid in products.keys():
+		visible = True
 		if 'title' in products[prodid] and 'version' in products[prodid] and 'PostDate' in products[prodid]:
 			num = 0
 			for branch in branches: 
 				if prodid in branch["products"]:
 					num = num + 1
+
+			depr = len(products[prodid].get('AppleCatalogs', [])) < 1
+			if hidecommonly == "true":
+				if num == len(branches) and depr == False:
+					visible = False
 
 			prodlist.append({
 				'title': products[prodid]['title'],
@@ -35,14 +42,13 @@ def update_list(request):
 				'size': products[prodid]['size'],
 				'description': get_description_content(products[prodid]['description']),
 				'id': prodid,
-				'depr': len(products[prodid].get('AppleCatalogs', [])) < 1,
-				'branches': num,
+				'depr': depr,
+				'visible': visible,
 				})
 		else:
 			print 'Invalid update!'
 
 	sprodlist = sorted(prodlist, key=itemgetter('PostDate'), reverse=True)
-	hidecommonly = request.COOKIES.get('hidecommonly') 
 
 	context = {'products': sprodlist,
 				'branches': branches,

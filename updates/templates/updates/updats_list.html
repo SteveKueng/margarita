@@ -63,7 +63,7 @@
 	</thead>
 	<tbody>
 	{% for product in products %}
-		{% if hidecommonly != "true" or product.depr and product.branches != branches|length %}
+		{% if product.visible %}
 		<tr style="word-break: break-all;">
 			<td onclick="showDiscr(this)">
 				{{ product.title }} {% if product.depr %}<span class="label label-warning">depricated</span>{% endif %}
